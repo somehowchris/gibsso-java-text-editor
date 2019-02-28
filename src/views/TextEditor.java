@@ -9,11 +9,15 @@ import javax.swing.text.DefaultEditorKit;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.Arrays;
 
 public class TextEditor extends JFrame {
 
     JTextArea editor;
+    String currentFilePath;
+
     public TextEditor(){
         super();
         Menu datei = new Menu("Datei", Arrays.asList(open, save, close));
@@ -22,7 +26,7 @@ public class TextEditor extends JFrame {
         setSize(920, 640);
         setLayout(new BorderLayout());
         editor = eingabebereich();
-        add(new ToolBar(Arrays.asList(open,save, cut(), copy(), paste() )), BorderLayout.PAGE_START);
+        add(new ToolBar(Arrays.asList(newFile,open,save, cut(), copy(), paste() )), BorderLayout.PAGE_START);
         Menu bearbeiten = new Menu("Bearbeiten", Arrays.asList(cut(),copy(),paste(),selectAll()));
         setJMenuBar(new MenuBar(Arrays.asList(datei,bearbeiten)));
     }
@@ -38,24 +42,78 @@ public class TextEditor extends JFrame {
 
     Action save = new Action("Speichern", Commands.SAVE,"src/assets/save.gif"){
         public void actionPerformed(ActionEvent e){
-
-        }
-    };
-
-    Action open = new Action("Öffnen",Commands.OPEN,"src/assets/open.gif"){
-        public void actionPerformed(ActionEvent e){
-            JFileChooser chooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-            int returnValue = chooser.showOpenDialog(null);
-            if (returnValue == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = chooser.getSelectedFile();
-                System.out.println(selectedFile.getAbsolutePath());
-                editor.read
+            if(currentFilePath != null){
+                writeFile(editor.getText(), new File(currentFilePath));
+            }else{
+                JFileChooser chooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+                do {
+                    int returnValue = chooser.showSaveDialog(null);
+                    if (returnValue == JFileChooser.APPROVE_OPTION) {
+                        File selectedFile = chooser.getSelectedFile();
+                        if (selectedFile.getName().endsWith(".txt")) {
+                            writeFile(editor.getText(), selectedFile);
+                            return;
+                        }
+                        JOptionPane.showMessageDialog(
+                                null, "Please enter a valid name with a .txt ending", "Failure", JOptionPane.ERROR_MESSAGE);
+                    }
+                }while(chooser.getSelectedFile().getName().endsWith(".txt") == false);
             }
         }
     };
+
+    public boolean writeFile(String content, File file){
+        try {
+            FileWriter fw = new FileWriter(file);
+            fw.write(content);
+            fw.flush();
+            currentFilePath = file.getAbsolutePath();
+            return true;
+        } catch (Exception exc){
+            JOptionPane.showMessageDialog(
+                    null, "Failed to save the file", "Failure", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+    }
+
+    Action open = new Action("Öffnen",Commands.OPEN,"src/assets/open.gif"){
+        public void actionPerformed(ActionEvent e){
+            JFileChooser chooser = new JFileChooser(currentFilePath == null ? FileSystemView.getFileSystemView().getHomeDirectory() : new File(currentFilePath));
+            chooser.setFileFilter(new FileFilter() {
+                @Override
+                public boolean accept(File f) {
+                    return f.getName().endsWith(".txt");
+                }
+
+                @Override
+                public String getDescription() {
+                    return "Text file (.txt)";
+                }
+            });
+            int returnValue = chooser.showOpenDialog(null);
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = chooser.getSelectedFile();
+                currentFilePath = selectedFile.getAbsolutePath();
+                try {
+                    editor.read(new FileReader(selectedFile), "test");
+                }catch(Exception exc){
+                    JOptionPane.showMessageDialog(
+                            null, "Failed to open this file", "Failure", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+    };
+
     Action close = new Action("Beenden",Commands.CLOSE,null){
         public void actionPerformed(ActionEvent e){
+            System.exit(0);
+        }
+    };
 
+    Action newFile = new Action("Neu",Commands.CLOSE,"src/assets/new.gif"){
+        public void actionPerformed(ActionEvent e){
+            currentFilePath = null;
+            editor.setText("");
         }
     };
 
