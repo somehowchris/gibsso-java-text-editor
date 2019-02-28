@@ -1,4 +1,4 @@
-package views;
+package helpers;
 
 //	MyMenu2.java
 //	******************************************************************************************************************************
@@ -13,7 +13,6 @@ package views;
 //	diesselben Funktionen stecken. Die Action (Klasse AbstractAction als Defaultimplementation der Schnittstelle Action) beinhalten
 //	den Text, das Bild und die auszuführende Aktion selbst.
 //										// Importieren aller Klassen aus java.awt
-import enums.Commands;
 
 import javax.swing.*;
 import java.util.List;
@@ -21,6 +20,7 @@ import java.util.List;
 public class MenuBar extends JMenuBar {
 
     public MenuBar(List<Menu> menus) {
+        super();
         menus.forEach(el->add(el));
     }
 }

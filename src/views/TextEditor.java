@@ -1,6 +1,7 @@
 package views;
 
 import enums.Commands;
+import helpers.ToolBar;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -20,15 +21,15 @@ public class TextEditor extends JFrame {
 
     public TextEditor(){
         super();
-        Menu datei = new Menu("Datei", Arrays.asList(open, save, close));
+        helpers.Menu datei = new helpers.Menu("Datei", Arrays.asList(open, save, close));
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("Text Editor 101");
         setSize(920, 640);
         setLayout(new BorderLayout());
         editor = eingabebereich();
         add(new ToolBar(Arrays.asList(newFile,open,save, cut(), copy(), paste() )), BorderLayout.PAGE_START);
-        Menu bearbeiten = new Menu("Bearbeiten", Arrays.asList(cut(),copy(),paste(),selectAll()));
-        setJMenuBar(new MenuBar(Arrays.asList(datei,bearbeiten)));
+        helpers.Menu bearbeiten = new helpers.Menu("Bearbeiten", Arrays.asList(cut(),copy(),paste(),selectAll()));
+        setJMenuBar(new helpers.MenuBar(Arrays.asList(datei,bearbeiten)));
     }
 
     public JTextArea eingabebereich(){
@@ -40,7 +41,7 @@ public class TextEditor extends JFrame {
         return textArea;
     }
 
-    Action save = new Action("Speichern", Commands.SAVE,"src/assets/save.gif"){
+    helpers.Action save = new helpers.Action("Speichern", Commands.SAVE,"src/assets/save.gif"){
         public void actionPerformed(ActionEvent e){
             if(currentFilePath != null){
                 writeFile(editor.getText(), new File(currentFilePath));
@@ -76,7 +77,7 @@ public class TextEditor extends JFrame {
         }
     }
 
-    Action open = new Action("Öffnen",Commands.OPEN,"src/assets/open.gif"){
+    helpers.Action open = new helpers.Action("Öffnen",Commands.OPEN,"src/assets/open.gif"){
         public void actionPerformed(ActionEvent e){
             JFileChooser chooser = new JFileChooser(currentFilePath == null ? FileSystemView.getFileSystemView().getHomeDirectory() : new File(currentFilePath));
             chooser.setFileFilter(new FileFilter() {
@@ -104,13 +105,13 @@ public class TextEditor extends JFrame {
         }
     };
 
-    Action close = new Action("Beenden",Commands.CLOSE,null){
+    helpers.Action close = new helpers.Action("Beenden",Commands.CLOSE,null){
         public void actionPerformed(ActionEvent e){
             System.exit(0);
         }
     };
 
-    Action newFile = new Action("Neu",Commands.CLOSE,"src/assets/new.gif"){
+    helpers.Action newFile = new helpers.Action("Neu",Commands.CLOSE,"src/assets/new.gif"){
         public void actionPerformed(ActionEvent e){
             currentFilePath = null;
             editor.setText("");
@@ -119,28 +120,28 @@ public class TextEditor extends JFrame {
 
     private javax.swing.Action selectAll(){
         javax.swing.Action selectAll = editor.getActionMap().get(DefaultEditorKit.selectAllAction);
-        selectAll.putValue(Action.NAME, "Alles markieren");
+        selectAll.putValue(helpers.Action.NAME, "Alles markieren");
         return selectAll;
     }
 
     public javax.swing.Action copy(){
         javax.swing.Action copy = editor.getActionMap().get(DefaultEditorKit.copyAction);
-        copy.putValue(Action.NAME, "Kopieren");
-        copy.putValue(Action.SMALL_ICON, new ImageIcon("src/assets/copy.gif"));
+        copy.putValue(helpers.Action.NAME, "Kopieren");
+        copy.putValue(helpers.Action.SMALL_ICON, new ImageIcon("src/assets/copy.gif"));
         return copy;
     }
 
     public javax.swing.Action cut(){
         javax.swing.Action cut = editor.getActionMap().get(DefaultEditorKit.cutAction);
-        cut.putValue(Action.NAME, "Ausschneiden");
-        cut.putValue(Action.SMALL_ICON, new ImageIcon("src/assets/cut.gif"));
+        cut.putValue(helpers.Action.NAME, "Ausschneiden");
+        cut.putValue(helpers.Action.SMALL_ICON, new ImageIcon("src/assets/cut.gif"));
         return cut;
     }
 
     public javax.swing.Action paste(){
         javax.swing.Action paste = editor.getActionMap().get(DefaultEditorKit.pasteAction);
-        paste.putValue(Action.NAME, "Einfügen");
-        paste.putValue(Action.SMALL_ICON, new ImageIcon("src/assets/paste.gif"));
+        paste.putValue(helpers.Action.NAME, "Einfügen");
+        paste.putValue(helpers.Action.SMALL_ICON, new ImageIcon("src/assets/paste.gif"));
         return paste;
     }
 
