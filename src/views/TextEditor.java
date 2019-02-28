@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.text.DefaultEditorKit;
+import javax.swing.undo.UndoManager;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -18,6 +19,7 @@ public class TextEditor extends JFrame {
 
     JTextArea editor;
     String currentFilePath;
+    UndoManager manager;
 
     public TextEditor(){
         super();
@@ -27,7 +29,9 @@ public class TextEditor extends JFrame {
         setSize(920, 640);
         setLayout(new BorderLayout());
         editor = eingabebereich();
-        add(new ToolBar(Arrays.asList(newFile,open,save, cut(), copy(), paste() )), BorderLayout.PAGE_START);
+        manager = new UndoManager();
+        editor.getDocument().addUndoableEditListener(manager);
+        add(new ToolBar(Arrays.asList(newFile,open,save,undo,redo, cut(), copy(), paste() )), BorderLayout.PAGE_START);
         helpers.Menu bearbeiten = new helpers.Menu("Bearbeiten", Arrays.asList(cut(),copy(),paste(),selectAll()));
         setJMenuBar(new helpers.MenuBar(Arrays.asList(datei,bearbeiten)));
     }
@@ -115,6 +119,22 @@ public class TextEditor extends JFrame {
         public void actionPerformed(ActionEvent e){
             currentFilePath = null;
             editor.setText("");
+        }
+    };
+
+    helpers.Action redo = new helpers.Action("Forwärts",Commands.CLOSE,"src/assets/redo.gif"){
+        public void actionPerformed(ActionEvent e){
+            try {
+                manager.redo();
+            }catch(Exception exc){}
+        }
+    };
+
+    helpers.Action undo = new helpers.Action("Rückwärts",Commands.CLOSE,"src/assets/undo.gif"){
+        public void actionPerformed(ActionEvent e){
+            try {
+                manager.undo();
+            }catch(Exception exc){}
         }
     };
 
