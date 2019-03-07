@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Arrays;
-
 public class TextEditor extends JFrame {
 
     JTextArea editor;
@@ -23,7 +22,6 @@ public class TextEditor extends JFrame {
 
     public TextEditor(){
         super();
-        helpers.Menu datei = new helpers.Menu("Datei", Arrays.asList(open, save, close));
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("Text Editor 101");
         setSize(920, 640);
@@ -31,8 +29,9 @@ public class TextEditor extends JFrame {
         editor = eingabebereich();
         manager = new UndoManager();
         editor.getDocument().addUndoableEditListener(manager);
-        add(new ToolBar(Arrays.asList(newFile,open,save,undo,redo, cut(), copy(), paste() )), BorderLayout.PAGE_START);
-        helpers.Menu bearbeiten = new helpers.Menu("Bearbeiten", Arrays.asList(cut(),copy(),paste(),selectAll()));
+        add(new ToolBar(Arrays.asList(newFile,open,save, cut(), copy(), paste(),undo,redo)), BorderLayout.PAGE_START);
+        helpers.Menu bearbeiten = new helpers.Menu("Bearbeiten", Arrays.asList(cut(),copy(),paste(),selectAll(),undo,redo));
+        helpers.Menu datei = new helpers.Menu("Datei", Arrays.asList(open, save, close));
         setJMenuBar(new helpers.MenuBar(Arrays.asList(datei,bearbeiten)));
     }
 
